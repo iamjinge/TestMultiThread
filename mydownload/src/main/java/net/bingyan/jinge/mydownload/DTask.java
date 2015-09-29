@@ -17,6 +17,7 @@ public abstract class DTask implements Runnable {
 
     public DTask(String url) {
         this.url = url;
+        setPriority(0);
     }
 
     protected void setCallback(DCallback callback){

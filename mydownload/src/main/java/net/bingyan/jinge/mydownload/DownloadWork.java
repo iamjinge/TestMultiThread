@@ -1,7 +1,5 @@
 package net.bingyan.jinge.mydownload;
 
-import android.provider.ContactsContract;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,14 +33,39 @@ public class DownloadWork {
 
     public void onSizeGet(int size) {
         this.size = size;
-        if (size <= DataType.M2) {
-            DownloadTask downloadTask = new DownloadTask(url, path);
+        if (size >> PowerOf2.M2 <= 1) {
+            DownloadTask downloadTask = new DownloadTask(url, path, 0, size);
             taskBinTree.addTask(downloadTask);
-        } else if (size <= DataType.M8) {
-            for (int i = 0; i < size / DataType.M2; i++) {
-                DownloadTask downloadTask = new DownloadTask(url, path);
-                
+        } else if (size <= PowerOf2.M8) {
+            int i;
+            for (i = 0; i < size >> PowerOf2.M2; i++) {
+                DownloadTask downloadTask = new DownloadTask(url, path,
+                        i >> PowerOf2.M2, (i+1) >> PowerOf2.M2 -1);
+                taskBinTree.addTask(downloadTask);
             }
+            DownloadTask downloadTask = new DownloadTask(url, path,
+                    i >> PowerOf2.M2, size - 1);
+            taskBinTree.addTask(downloadTask);
+        }else if (size <= PowerOf2.M32) {
+            int i;
+            for (i = 0; i < size >> PowerOf2.M8; i++) {
+                DownloadTask downloadTask = new DownloadTask(url, path,
+                        i >> PowerOf2.M8, (i+1) >> PowerOf2.M8 -1);
+                taskBinTree.addTask(downloadTask);
+            }
+            DownloadTask downloadTask = new DownloadTask(url, path,
+                    i >> PowerOf2.M8, size - 1);
+            taskBinTree.addTask(downloadTask);
+        } else {
+            int i;
+            for (i = 0; i < size >> PowerOf2.M32; i++) {
+                DownloadTask downloadTask = new DownloadTask(url, path,
+                        i >> PowerOf2.M32, (i+1) >> PowerOf2.M32 -1);
+                taskBinTree.addTask(downloadTask);
+            }
+            DownloadTask downloadTask = new DownloadTask(url, path,
+                    i >> PowerOf2.M32, size - 1);
+            taskBinTree.addTask(downloadTask);
         }
     }
 }

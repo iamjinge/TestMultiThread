@@ -20,6 +20,13 @@ public class DownloadTask extends DTask {
         this.path = path;
     }
 
+    public DownloadTask(String url, String path, int start, int end) {
+        super(url);
+        this.start = start;
+        this.end = end;
+        this.path = path;
+    }
+
     public void setStart(int start) {
         this.start = start;
     }
