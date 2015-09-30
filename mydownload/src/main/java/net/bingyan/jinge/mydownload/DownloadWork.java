@@ -46,12 +46,12 @@ public class DownloadWork {
         } else if (size <= PowerOf2.M8) {
             int i;
             for (i = 0; i < size >> PowerOf2.M2; i++) {
-                DownloadTask downloadTask = new DownloadTask(url, path,
+                DownloadTask downloadTask = new DownloadTask(url, path, i,
                         i << PowerOf2.M2, (i+1) << PowerOf2.M2 -1);
 				downloadTasks.add(downloadTask);
                 taskBinTree.addTask(downloadTask);
             }
-            DownloadTask downloadTask = new DownloadTask(url, path,
+            DownloadTask downloadTask = new DownloadTask(url, path,i,
                     i << PowerOf2.M2, size - 1);
 			downloadTasks.add(downloadTask);
             taskBinTree.addTask(downloadTask);
@@ -60,12 +60,12 @@ public class DownloadWork {
         }else if (size <= PowerOf2.M32) {
             int i;
             for (i = 0; i < size >> PowerOf2.M8; i++) {
-                DownloadTask downloadTask = new DownloadTask(url, path,
+                DownloadTask downloadTask = new DownloadTask(url, path,i,
                         i << PowerOf2.M8, (i+1) << PowerOf2.M8 -1);
 				downloadTasks.add(downloadTask);
                 taskBinTree.addTask(downloadTask);
             }
-            DownloadTask downloadTask = new DownloadTask(url, path,
+            DownloadTask downloadTask = new DownloadTask(url, path,i,
                     i << PowerOf2.M8, size - 1);
 			downloadTasks.add(downloadTask);
             taskBinTree.addTask(downloadTask);
@@ -74,12 +74,12 @@ public class DownloadWork {
         } else {
             int i;
             for (i = 0; i < size >> PowerOf2.M32; i++) {
-                DownloadTask downloadTask = new DownloadTask(url, path,
+                DownloadTask downloadTask = new DownloadTask(url, path,i,
                         i << PowerOf2.M32, (i+1) << PowerOf2.M32 -1);
 				downloadTasks.add(downloadTask);
                 taskBinTree.addTask(downloadTask);
             }
-            DownloadTask downloadTask = new DownloadTask(url, path,
+            DownloadTask downloadTask = new DownloadTask(url, path,i,
                     i << PowerOf2.M32, size - 1);
 			downloadTasks.add(downloadTask);
             taskBinTree.addTask(downloadTask);
@@ -88,7 +88,7 @@ public class DownloadWork {
         }
     }
 	
-	public void onPercentGet(int percent){
-		
+	public void onPercentGet(int partId, int percent){
+		downloadTasks.get(partId);
 	}
 }

@@ -6,6 +6,7 @@ package net.bingyan.jinge.mydownload;
 public class TaskBinTree {
 
     private Node root;
+	private int size;
     private static TaskBinTree instance;
 
     public static TaskBinTree getInstance() {
@@ -46,6 +47,7 @@ public class TaskBinTree {
                 }
 
             }
+			size ++;
         }
 
     }
@@ -68,6 +70,7 @@ public class TaskBinTree {
                     } else {
                         temp = current;
                         parent.setLeft(current.getRight());
+						size--;
                         break;
                     }
                 }
@@ -76,6 +79,9 @@ public class TaskBinTree {
         }
     }
 
+	public int getSize(){
+		return size;
+	}
 
     public class Node {
         DTask data;
