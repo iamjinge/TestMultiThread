@@ -19,11 +19,13 @@ public class DownloadWork {
 
     public DownloadWork(String url) {
         this.url = url;
+		initObtainSizeTask();
     }
 
     public DownloadWork(String url, String path) {
         this.url = url;
         this.path = path;
+		initObtainSizeTask();
     }
 
     private void initObtainSizeTask() {
