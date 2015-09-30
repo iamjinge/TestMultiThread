@@ -37,10 +37,5 @@ public abstract class DTask implements Runnable {
     public int getPriority() {
         return priority;
     }
-
-    public interface DCallback {
-        void getSize(String url, int size);
-
-        void getPercent(String url, int size);
-    }
+    
 }
