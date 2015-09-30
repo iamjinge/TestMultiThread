@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-        new DownloadTask("http://7xn38b.com1.z0.glb.clouddn.com/picture/FILE0194.jpg");
+        new DownloadWork("http://7xn38b.com1.z0.glb.clouddn.com/picture/FILE0194.jpg");
     }
 
     @Override
