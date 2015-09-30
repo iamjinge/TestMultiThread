@@ -11,18 +11,19 @@ import java.net.URL;
  * Created on 2015/9/28.
  */
 public class DownloadTask extends DTask {
+	private int partId;
     private int start;
     private int end;
     private String path;
 
-    public DownloadTask(String url, String path) {
+    public DownloadTask(String url, String path, int partId) {
         super(url);
         this.path = path;
+		this.partId = partId;
     }
 
-    public DownloadTask(String url, String path, int start, int end) {
-        super(url);
-        this.start = start;
+    public DownloadTask(String url, String path, int partId, int start, int end) {
+        this(url,path,partId);
         this.end = end;
         this.path = path;
     }
@@ -55,7 +56,7 @@ public class DownloadTask extends DTask {
             while ((len = in.read(buffer)) != -1) {
 //                Log.d("test", len + " " + i);
                 randomFile.write(buffer, 0, len);
-                callback.getPercent(url, len);
+                callback.getPercent(url, partId, len);
             }
             randomFile.close();
         } catch (IOException e) {
