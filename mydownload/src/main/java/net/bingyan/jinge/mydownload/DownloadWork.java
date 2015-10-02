@@ -1,5 +1,7 @@
 package net.bingyan.jinge.mydownload;
 
+import net.bingyan.jinge.mydownload.old.TaskBinTree;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +9,8 @@ import java.util.List;
  * Created on 2015/9/29.
  */
 public class DownloadWork {
+    private boolean workLive = true;
+    private boolean workOn = true;
 
     private String url;
     private String path;
@@ -16,8 +20,6 @@ public class DownloadWork {
 
     private GetSizeTask getSizeTask;
     private List<DownloadTask> downloadTasks = new ArrayList<>();
-
-    private TaskBinTree taskBinTree = TaskBinTree.getInstance();
 
     public DownloadWork(String url) {
         this.url = url;
@@ -32,7 +34,7 @@ public class DownloadWork {
 
     private void initObtainSizeTask() {
         getSizeTask = new GetSizeTask(url);
-        taskBinTree.addTask(getSizeTask);
+        DownloadManager.addTask(getSizeTask);
     }
 
     public void onSizeGet(int size) {
@@ -40,7 +42,7 @@ public class DownloadWork {
         if (size >> PowerOf2.M2 <= 1) {
             DownloadTask downloadTask = new DownloadTask(url, path, 0, 0, size);
             downloadTasks.add(downloadTask);
-            taskBinTree.addTask(downloadTask);
+            DownloadManager.addTask(downloadTask);
             parts = 1;
             partSize = PowerOf2.M2;
         } else if (size <= PowerOf2.M8) {
@@ -49,12 +51,12 @@ public class DownloadWork {
                 DownloadTask downloadTask = new DownloadTask(url, path, i,
                         i << PowerOf2.M2, (i + 1) << PowerOf2.M2 - 1);
                 downloadTasks.add(downloadTask);
-                taskBinTree.addTask(downloadTask);
+                DownloadManager.addTask(downloadTask);
             }
             DownloadTask downloadTask = new DownloadTask(url, path, i,
                     i << PowerOf2.M2, size - 1);
             downloadTasks.add(downloadTask);
-            taskBinTree.addTask(downloadTask);
+            DownloadManager.addTask(downloadTask);
             parts = ++i;
             partSize = PowerOf2.M2;
         } else if (size <= PowerOf2.M32) {
@@ -63,12 +65,12 @@ public class DownloadWork {
                 DownloadTask downloadTask = new DownloadTask(url, path, i,
                         i << PowerOf2.M8, (i + 1) << PowerOf2.M8 - 1);
                 downloadTasks.add(downloadTask);
-                taskBinTree.addTask(downloadTask);
+                DownloadManager.addTask(downloadTask);
             }
             DownloadTask downloadTask = new DownloadTask(url, path, i,
                     i << PowerOf2.M8, size - 1);
             downloadTasks.add(downloadTask);
-            taskBinTree.addTask(downloadTask);
+            DownloadManager.addTask(downloadTask);
             parts = ++i;
             partSize = PowerOf2.M8;
         } else {
@@ -77,12 +79,12 @@ public class DownloadWork {
                 DownloadTask downloadTask = new DownloadTask(url, path, i,
                         i << PowerOf2.M32, (i + 1) << PowerOf2.M32 - 1);
                 downloadTasks.add(downloadTask);
-                taskBinTree.addTask(downloadTask);
+                DownloadManager.addTask(downloadTask);
             }
             DownloadTask downloadTask = new DownloadTask(url, path, i,
                     i << PowerOf2.M32, size - 1);
             downloadTasks.add(downloadTask);
-            taskBinTree.addTask(downloadTask);
+            DownloadManager.addTask(downloadTask);
             parts = ++i;
             partSize = PowerOf2.M32;
         }
@@ -90,5 +92,21 @@ public class DownloadWork {
 
     public void onPercentGet(int partId, int percent) {
         downloadTasks.get(partId);
+    }
+
+    public boolean isWorkLive() {
+        return workLive;
+    }
+
+    public void setWorkLive(boolean workLive) {
+        this.workLive = workLive;
+    }
+
+    public boolean isWorkOn() {
+        return workOn;
+    }
+
+    public void setWorkOn(boolean workOn) {
+        this.workOn = workOn;
     }
 }

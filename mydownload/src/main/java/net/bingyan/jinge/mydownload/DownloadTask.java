@@ -43,27 +43,37 @@ public class DownloadTask extends DTask {
 
     @Override
     public void run() {
-        try {
-            File file = new File(path);
-            RandomAccessFile randomFile = new RandomAccessFile(file, "rwd");
-            connection = (HttpURLConnection) new URL(url).openConnection();
-            connection.setRequestProperty("Range", "bytes=" + start + "-" + end);
+        if (taskLive) {
+            try {
+                File file = new File(path);
+                RandomAccessFile randomFile = new RandomAccessFile(file, "rwd");
+                connection = (HttpURLConnection) new URL(url).openConnection();
+                connection.setRequestProperty("Range", "bytes=" + start + "-" + end);
 
-            InputStream in = connection.getInputStream();
-            byte[] buffer = new byte[1024];
-            int len;
-            randomFile.seek(start);
-            while ((len = in.read(buffer)) != -1) {
+                InputStream in = connection.getInputStream();
+                byte[] buffer = new byte[1024];
+                int len;
+                randomFile.seek(start);
+                while (taskLive) {
+                    while(taskOn) {
+                        len = in.read(buffer);
+                        randomFile.write(buffer, 0, len);
+                        callback.getPercent(url, partId, len);
+                    }
+                }
+                while ((len = in.read(buffer)) != -1) {
 //                Log.d("test", len + " " + i);
-                randomFile.write(buffer, 0, len);
-                callback.getPercent(url, partId, len);
+                    randomFile.write(buffer, 0, len);
+                    callback.getPercent(url, partId, len);
+                }
+                randomFile.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                connection.disconnect();
             }
-            randomFile.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            connection.disconnect();
         }
+
     }
 
 }

@@ -1,4 +1,6 @@
-package net.bingyan.jinge.mydownload;
+package net.bingyan.jinge.mydownload.old;
+
+import net.bingyan.jinge.mydownload.DTask;
 
 /**
  * Created on 2015/9/29.

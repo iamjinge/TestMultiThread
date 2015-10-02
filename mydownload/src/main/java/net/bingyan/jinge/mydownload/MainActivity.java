@@ -22,11 +22,14 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                DownloadDataHelper helper = DownloadDataHelper.getInstance(MainActivity.this);
+//                helper.addData("test", 0, 10);
+                helper.addData("test", 15, 21);
+//                helper.addData("test", 30, 31);
+//                helper.addData("test", 0, 22);
             }
         });
-        new DownloadWork("http://7xn38b.com1.z0.glb.clouddn.com/picture/FILE0194.jpg");
+//        new DownloadWork("http://7xn38b.com1.z0.glb.clouddn.com/picture/FILE0194.jpg");
     }
 
     @Override
