@@ -87,6 +87,7 @@ public class TaskBinTree {
         DTask data;
         Node left;
         Node right;
+//        PriorityBlockingQueue
 
         public Node(DTask data) {
             this.data = data;

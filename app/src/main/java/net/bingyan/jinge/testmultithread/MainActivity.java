@@ -9,7 +9,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import java.net.*;
+import java.util.concurrent.PriorityBlockingQueue;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,47 +26,37 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DownloadUtil util = new DownloadUtil(MainActivity.this);
+//                DownloadUtil util = new DownloadUtil(MainActivity.this);
+                test();
             }
         });
 
-        char[] sample = "()[]".toCharArray();
+    }
 
-        int start = 0;
-        int end = sample.length - 1;
-
-        boolean result = false;
-
-        while (start < end) {
-            int m = 0, n = 0, p = 0, q = 0;
-            for (int i = start; i <= end; i++) {
-                switch (sample[i]) {
-                    case '(':
-                        m++;
-                        break;
-                    case ')':
-                        n++;
-                        break;
-                    case '[':
-                        p++;
-                        break;
-                    case ']':
-                        q++;
-                        break;
-                }
-            }
-            if (m != n && p != q) {
+    private void test() {
+        Log.d("test", "start");
+        PriorityBlockingQueue<DTask> pbqString = new PriorityBlockingQueue<>();
+        DownloadTask dt = new DownloadTask("1", "1", 1);
+        dt.setPriority(1);
+        pbqString.add(dt);
+        dt = new DownloadTask("2", "2", 2);
+        dt.setPriority(2);
+        pbqString.add(dt);
+        dt = new DownloadTask("3", "3", 3);
+        dt.setPriority(2);
+        pbqString.add(dt);
+        dt = new DownloadTask("4", "4", 4);
+        dt.setPriority(0);
+        pbqString.add(dt);
+        Log.d("test", "add");
+        while (true) {
+            DTask d = pbqString.poll();
+            if (d == null) {
                 break;
-            }
-            if ((sample[start] == '(' && sample[end] == ')') ||
-                    (sample[start] == '[' && sample[end] == ']')) {
-                start++;
-                end--;
             } else {
-                start++;
+                Log.d("test", d.getUrl() + "  " + d.getPriority());
             }
         }
-
     }
 
     @Override
