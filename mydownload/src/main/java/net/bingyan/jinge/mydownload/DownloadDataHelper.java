@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.UnknownFormatConversionException;
+import java.util.*;
 
 /**
  * Created on 2015/10/2.
@@ -105,24 +106,32 @@ public class DownloadDataHelper {
         return wid;
     }
 
-    public void getAbcentData(int wid, int size) {
+    public List<Integer> getAbcentData(int wid, int size) {
         Cursor cursor = database.query(DownloadData.TABLE_NAME,
                 new String[]{DownloadData.START, DownloadData.END},
                 DownloadData.WORK_ID + " = ? ",
                 new String[]{String.valueOf(wid)},
                 null, null, null);
 
-        int[] parts = new int[cursor.getCount() / 2];
+        List<Integer> parts = new ArrayList<>();
         cursor.moveToFirst();
-        int start = cursor.getInt(cursor.getColumnIndex(DownloadData.END));
+		if(cursor.getInt(cursor.getColumnIndex(DownloadData.START))!=0){
+			parts.add(0);
+			parts.add(cursor.getInt(cursor.getColumnIndex(DownloadData.START)));
+		}
+        int start = cursor.getInt(cursor.getColumnIndex(DownloadData.END))+1;
         int end;
         while (cursor.moveToNext()) {
-            end = cursor.getInt(cursor.getColumnIndex(DownloadData.START));
-
-            start = cursor.getInt(cursor.getColumnIndex(DownloadData.END));
+            end = cursor.getInt(cursor.getColumnIndex(DownloadData.START))-1;
+			parts.add(start);
+			parts.add(end);
+            start = cursor.getInt(cursor.getColumnIndex(DownloadData.END))+1;
         }
-
-
+		if(cursor.getInt(cursor.getColumnIndex(DownloadData.END))!=size-1){
+			parts.add(cursor.getInt(cursor.getColumnIndex(DownloadData.END))+1);
+			parts.add(size-1);
+		}
+		return parts;
     }
 
 }
