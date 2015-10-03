@@ -35,6 +35,13 @@ public class DownloadDataHelper {
         return instance;
     }
 
+    public synchronized void addWork(String url, int size){
+        ContentValues values = new ContentValues();
+        values.put(SizeData.URL, url);
+        values.put(SizeData.SIZE, size);
+        database.insert(SizeData.TABLE_NAME, null, values);
+    }
+
     public synchronized void addData(int wid, int start, int end) {
         Cursor cursor = database.query(DownloadData.TABLE_NAME, new String[]{DownloadData.ID},
                 DownloadData.START + " <= ? and " + DownloadData.END + " >= ? ",
@@ -46,7 +53,7 @@ public class DownloadDataHelper {
                     new String[]{DownloadData.ID, DownloadData.START, DownloadData.END},
                     DownloadData.END + " = ? or " + DownloadData.START + " = ? ",
                     new String[]{String.valueOf(start - 1), String.valueOf(end + 1)},
-                    null, DownloadData.START, null);
+                    null, null, DownloadData.START);
             if (union.getCount() == 2) {
                 union.moveToFirst();
                 int firstId = union.getInt(union.getColumnIndex(DownloadData.ID));
@@ -86,7 +93,7 @@ public class DownloadDataHelper {
 
     }
 
-    public synchronized void addData(String url, int start, int end){
+    public synchronized void addData(String url, int start, int end) {
         int wid = getIdOfUrl(url);
         addData(wid, start, end);
     }
@@ -98,40 +105,58 @@ public class DownloadDataHelper {
         int wid;
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
-            wid =  cursor.getInt(cursor.getColumnIndex(SizeData.ID));
+            wid = cursor.getInt(cursor.getColumnIndex(SizeData.ID));
         } else {
-            wid =  -1;
+            wid = -1;
         }
         cursor.close();
         return wid;
     }
 
-    public List<Integer> getAbcentData(int wid, int size) {
+    public ArrayList<Integer> getAbsentData(int wid, int size) {
         Cursor cursor = database.query(DownloadData.TABLE_NAME,
                 new String[]{DownloadData.START, DownloadData.END},
                 DownloadData.WORK_ID + " = ? ",
                 new String[]{String.valueOf(wid)},
                 null, null, null);
 
-        List<Integer> parts = new ArrayList<>();
+        ArrayList<Integer> parts = new ArrayList<>();
         cursor.moveToFirst();
-		if(cursor.getInt(cursor.getColumnIndex(DownloadData.START))!=0){
-			parts.add(0);
-			parts.add(cursor.getInt(cursor.getColumnIndex(DownloadData.START)));
-		}
-        int start = cursor.getInt(cursor.getColumnIndex(DownloadData.END))+1;
+        if (cursor.getInt(cursor.getColumnIndex(DownloadData.START)) != 0) {
+            parts.add(0);
+            parts.add(cursor.getInt(cursor.getColumnIndex(DownloadData.START)));
+        }
+
+        int start = cursor.getInt(cursor.getColumnIndex(DownloadData.END)) + 1;
         int end;
         while (cursor.moveToNext()) {
-            end = cursor.getInt(cursor.getColumnIndex(DownloadData.START))-1;
-			parts.add(start);
-			parts.add(end);
-            start = cursor.getInt(cursor.getColumnIndex(DownloadData.END))+1;
+            end = cursor.getInt(cursor.getColumnIndex(DownloadData.START)) - 1;
+            parts.add(start);
+            parts.add(end);
+            start = cursor.getInt(cursor.getColumnIndex(DownloadData.END)) + 1;
         }
-		if(cursor.getInt(cursor.getColumnIndex(DownloadData.END))!=size-1){
-			parts.add(cursor.getInt(cursor.getColumnIndex(DownloadData.END))+1);
-			parts.add(size-1);
-		}
-		return parts;
+
+        cursor.moveToPrevious();
+        if (cursor.getInt(cursor.getColumnIndex(DownloadData.END)) != size - 1) {
+            parts.add(cursor.getInt(cursor.getColumnIndex(DownloadData.END)) + 1);
+            parts.add(size - 1);
+        }
+        cursor.close();
+        return parts;
+    }
+
+    public ArrayList<Integer> getAbsentData(String url) {
+        Cursor cursor = database.query(SizeData.TABLE_NAME,
+                new String[]{SizeData.ID, SizeData.SIZE},
+                SizeData.URL + " = ? ",
+                new String[]{url},
+                null, null, null);
+
+        cursor.moveToFirst();
+        int wid = cursor.getInt(cursor.getColumnIndex(SizeData.ID));
+        int size = cursor.getInt(cursor.getColumnIndex(SizeData.SIZE));
+        cursor.close();
+        return getAbsentData(wid, size);
     }
 
 }

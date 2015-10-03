@@ -5,9 +5,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,10 +26,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 DownloadDataHelper helper = DownloadDataHelper.getInstance(MainActivity.this);
-//                helper.addData("test", 0, 10);
+                helper.addWork("test", 50);
+                helper.addData("test", 0, 10);
                 helper.addData("test", 15, 21);
 //                helper.addData("test", 30, 31);
 //                helper.addData("test", 0, 22);
+                ArrayList<Integer> test = helper.getAbsentData("test");
+                for (int i : test){
+                    Log.d("test", i + "");
+                }
             }
         });
 //        new DownloadWork("http://7xn38b.com1.z0.glb.clouddn.com/picture/FILE0194.jpg");
