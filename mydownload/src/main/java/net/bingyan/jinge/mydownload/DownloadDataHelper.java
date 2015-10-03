@@ -85,6 +85,26 @@ public class DownloadDataHelper {
 
     }
 
+    public synchronized void addData(String url, int start, int end){
+        int wid = getIdOfUrl(url);
+        addData(wid, start, end);
+    }
+
+    public synchronized int getIdOfUrl(String url) {
+        Cursor cursor = database.query(SizeData.TABLE_NAME, new String[]{SizeData.ID},
+                SizeData.URL + " = ? ", new String[]{url},
+                null, null, null);
+        int wid;
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            wid =  cursor.getInt(cursor.getColumnIndex(SizeData.ID));
+        } else {
+            wid =  -1;
+        }
+        cursor.close();
+        return wid;
+    }
+
     public void getAbcentData(int wid, int size) {
         Cursor cursor = database.query(DownloadData.TABLE_NAME,
                 new String[]{DownloadData.START, DownloadData.END},
